@@ -209,6 +209,9 @@ addEventListener('fetch', async event => {
     }
 
     response.headers.delete('Expires');
+
+    response.headers.set('Access-Control-Allow-Origin', '*');
+    response.headers.set('Access-Control-Request-Method', 'GET');
   } catch (e) {
     response = errorResponse(e.message);
   }
