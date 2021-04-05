@@ -199,11 +199,19 @@ addEventListener('fetch', async event => {
 
   try {
     response = await handle(event);
+
+    if (event.request.url.includes('type=now')) {
+      // Cache 1 month
+      response.headers.set('Cache-Control', 'public, max-age=2592000');
+    } else {
+      // Cache 1 year ('max-recommended')
+      response.headers.set('Cache-Control', 'public, max-age=31536000');
+    }
+
+    response.headers.delete('Expires');
   } catch (e) {
     response = errorResponse(e.message);
   }
-
-  console.log(response);
 
   event.respondWith(response);
 });
