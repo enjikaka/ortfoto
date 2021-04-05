@@ -203,5 +203,7 @@ addEventListener('fetch', async event => {
     response = errorResponse(e.message);
   }
 
+  console.log(response);
+
   event.respondWith(response);
 });
