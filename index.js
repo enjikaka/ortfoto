@@ -1,59 +1,61 @@
 function geodeticToGrid(latitude, longitude) {
   const axis = 6378137.0; // GRS 80.
   const flattening = 1.0 / 298.257222101; // GRS 80.
-  const central_meridian = 15.00;
-  const lat_of_origin = 0.0;
+  const centralMeridian = 15.00;
+  const latOfOrigin = 0.0;
   const scale = 0.9996;
-  const false_northing = 0.0;
-  const false_easting = 500000.0;
+  const falseNorthing = 0.0;
+  const falseEasting = 500000.0;
 
-  var x_y = new Array(2);
-  if (central_meridian == null) {
-    return x_y;
+  const xy = new Array(2);
+
+  if (centralMeridian == null) {
+    return xy;
   }
+
   // Prepare ellipsoid-based stuff.
-  var e2 = flattening * (2.0 - flattening);
-  var n = flattening / (2.0 - flattening);
-  var a_roof = axis / (1.0 + n) * (1.0 + n * n / 4.0 + n * n * n * n / 64.0);
-  var A = e2;
-  var B = (5.0 * e2 * e2 - e2 * e2 * e2) / 6.0;
-  var C = (104.0 * e2 * e2 * e2 - 45.0 * e2 * e2 * e2 * e2) / 120.0;
-  var D = (1237.0 * e2 * e2 * e2 * e2) / 1260.0;
-  var beta1 = n / 2.0 - 2.0 * n * n / 3.0 + 5.0 * n * n * n / 16.0 + 41.0 * n * n * n * n / 180.0;
-  var beta2 = 13.0 * n * n / 48.0 - 3.0 * n * n * n / 5.0 + 557.0 * n * n * n * n / 1440.0;
-  var beta3 = 61.0 * n * n * n / 240.0 - 103.0 * n * n * n * n / 140.0;
-  var beta4 = 49561.0 * n * n * n * n / 161280.0;
+  const e2 = flattening * (2.0 - flattening);
+  const n = flattening / (2.0 - flattening);
+  const aRoof = axis / (1.0 + n) * (1.0 + n * n / 4.0 + n * n * n * n / 64.0);
+  const A = e2;
+  const B = (5.0 * e2 * e2 - e2 * e2 * e2) / 6.0;
+  const C = (104.0 * e2 * e2 * e2 - 45.0 * e2 * e2 * e2 * e2) / 120.0;
+  const D = (1237.0 * e2 * e2 * e2 * e2) / 1260.0;
+  const beta1 = n / 2.0 - 2.0 * n * n / 3.0 + 5.0 * n * n * n / 16.0 + 41.0 * n * n * n * n / 180.0;
+  const beta2 = 13.0 * n * n / 48.0 - 3.0 * n * n * n / 5.0 + 557.0 * n * n * n * n / 1440.0;
+  const beta3 = 61.0 * n * n * n / 240.0 - 103.0 * n * n * n * n / 140.0;
+  const beta4 = 49561.0 * n * n * n * n / 161280.0;
 
   // Convert.
-  var deg_to_rad = Math.PI / 180.0;
-  var phi = latitude * deg_to_rad;
-  var lambda = longitude * deg_to_rad;
-  var lambda_zero = central_meridian * deg_to_rad;
+  const degToRad = Math.PI / 180.0;
+  const phi = latitude * degToRad;
+  const lambda = longitude * degToRad;
+  const lambdaZero = centralMeridian * degToRad;
 
-  var phi_star = phi - Math.sin(phi) * Math.cos(phi) * (A +
+  const phiStar = phi - Math.sin(phi) * Math.cos(phi) * (A +
     B * Math.pow(Math.sin(phi), 2) +
     C * Math.pow(Math.sin(phi), 4) +
     D * Math.pow(Math.sin(phi), 6));
-  var delta_lambda = lambda - lambda_zero;
-  var xi_prim = Math.atan(Math.tan(phi_star) / Math.cos(delta_lambda));
-  var eta_prim = Math.atanh(Math.cos(phi_star) * Math.sin(delta_lambda));
-  var x = scale * a_roof * (xi_prim +
-    beta1 * Math.sin(2.0 * xi_prim) * Math.cosh(2.0 * eta_prim) +
-    beta2 * Math.sin(4.0 * xi_prim) * Math.cosh(4.0 * eta_prim) +
-    beta3 * Math.sin(6.0 * xi_prim) * Math.cosh(6.0 * eta_prim) +
-    beta4 * Math.sin(8.0 * xi_prim) * Math.cosh(8.0 * eta_prim)) +
-    false_northing;
-  var y = scale * a_roof * (eta_prim +
-    beta1 * Math.cos(2.0 * xi_prim) * Math.sinh(2.0 * eta_prim) +
-    beta2 * Math.cos(4.0 * xi_prim) * Math.sinh(4.0 * eta_prim) +
-    beta3 * Math.cos(6.0 * xi_prim) * Math.sinh(6.0 * eta_prim) +
-    beta4 * Math.cos(8.0 * xi_prim) * Math.sinh(8.0 * eta_prim)) +
-    false_easting;
-  x_y[0] = Math.round(x * 1000.0) / 1000.0;
-  x_y[1] = Math.round(y * 1000.0) / 1000.0;
-  //	x_y[0] = x;
-  //	x_y[1] = y;
-  return x_y;
+    const deltaLambda = lambda - lambdaZero;
+  const xiPrim = Math.atan(Math.tan(phiStar) / Math.cos(deltaLambda));
+  const etaPrim = Math.atanh(Math.cos(phiStar) * Math.sin(deltaLambda));
+  const x = scale * aRoof * (xiPrim +
+    beta1 * Math.sin(2.0 * xiPrim) * Math.cosh(2.0 * etaPrim) +
+    beta2 * Math.sin(4.0 * xiPrim) * Math.cosh(4.0 * etaPrim) +
+    beta3 * Math.sin(6.0 * xiPrim) * Math.cosh(6.0 * etaPrim) +
+    beta4 * Math.sin(8.0 * xiPrim) * Math.cosh(8.0 * etaPrim)) +
+    falseNorthing;
+  const y = scale * aRoof * (etaPrim +
+    beta1 * Math.cos(2.0 * xiPrim) * Math.sinh(2.0 * etaPrim) +
+    beta2 * Math.cos(4.0 * xiPrim) * Math.sinh(4.0 * etaPrim) +
+    beta3 * Math.cos(6.0 * xiPrim) * Math.sinh(6.0 * etaPrim) +
+    beta4 * Math.cos(8.0 * xiPrim) * Math.sinh(8.0 * etaPrim)) +
+    falseEasting;
+
+  xy[0] = Math.round(x * 1000.0) / 1000.0;
+  xy[1] = Math.round(y * 1000.0) / 1000.0;
+
+  return xy;
 }
 
 function offset([long, lat], dn = 10, de = 10) {
@@ -154,13 +156,13 @@ function errorResponse (msg) {
   });
 }
 
-async function handle (event) {
+function handle (event) {
   const url = new URL(event.request.url);
 
   const lat = parseFloat(url.searchParams.get('lat'));
 
   if (Number.isNaN(lat)) {
-   throw new ReferenceError('You did not provide a latidude value in the "lat" search parameter.');
+   throw new ReferenceError('You did not provide a latitude value in the "lat" search parameter.');
   }
 
   const lng = parseFloat(url.searchParams.get('lng'));
@@ -188,7 +190,6 @@ async function handle (event) {
       break;
     default:
       throw new ReferenceError('You did not provide a valid "type" search parameter. Available options are "60", "75" and "now".');
-      break;
   }
 
   return fetch(requestUrl);
