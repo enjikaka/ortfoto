@@ -210,9 +210,11 @@ addEventListener('fetch', async event => {
     }
 
     response.headers.delete('Expires');
+    response.headers.delete('Pragma');
 
     response.headers.set('Access-Control-Allow-Origin', '*');
     response.headers.set('Access-Control-Request-Method', 'GET');
+    response.headers.set('Vary', 'etag');
   } catch (e) {
     response = errorResponse(e.message);
   }
