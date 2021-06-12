@@ -199,7 +199,11 @@ addEventListener('fetch', async event => {
   let response;
 
   try {
-    response = await handle(event);
+    const rawResponse = await handle(event);
+
+    response = new Response(rawResponse.body, {
+      headers: new Headers(rawResponse.headers)
+    });
 
     if (event.request.url.includes('type=now')) {
       // Cache 1 month
@@ -211,11 +215,13 @@ addEventListener('fetch', async event => {
 
     response.headers.delete('Expires');
     response.headers.delete('Pragma');
+    response.headers.delete('set-cookie');
 
     response.headers.set('Access-Control-Allow-Origin', '*');
     response.headers.set('Access-Control-Request-Method', 'GET');
     response.headers.set('Vary', 'etag');
   } catch (e) {
+    console.error(e);
     response = errorResponse(e.message);
   }
 
