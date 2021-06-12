@@ -81,13 +81,6 @@ function getModern([lng, lat], options = { radius: 50, size: 512 }) {
   const { radius = '50', size = 512 } = options;
   const url = new URL('https://geolex.etjanster.lantmateriet.se/karta/ortofoto/wms/v1.3');
 
-  console.log({
-    lat,
-    lng,
-    size,
-    radius
-  });
-
   url.searchParams.set('LAYERS', 'Ortofoto_0.5');
   url.searchParams.set('EXCEPTIONS', 'application/vnd.ogc.se_xml');
   url.searchParams.set('FORMAT', 'image/png');
